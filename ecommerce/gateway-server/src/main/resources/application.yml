@@ -1,0 +1,44 @@
+server:
+   port: 7099
+eureka:
+   instance:
+      instance-id: ${spring.application.name}
+      hostname: localhost
+      statusPageUrlPath: /actuator/health
+   client:
+      service-url:
+         defaultZone: http://localhost:8761/eureka
+spring:
+   application:
+      name: gateway-server
+   cloud:
+      gateway:
+         discovery:
+            locator:
+               enabled: true
+               lower-case-service-id: true
+         routes:
+            - id: ms-authentication
+              uri: lb://ms-authentication
+              predicates:
+                 - Path=/auth/**
+            - id: ms-customer
+              uri: lb://ms-customer
+              predicates:
+                 - Path=/customer/**
+              filters:
+                 - AuthenticationFilter
+            - id: ms-product
+              uri: lb://ms-product
+              predicates:
+                 - Path=/product/**
+              filters:
+                 - AuthenticationFilter
+            - id: ms-order
+              uri: lb://ms-order
+              predicates:
+                 - Path=/order/**
+              filters:
+                 - AuthenticationFilter
+secret:
+   key: 3cfa76ef14937c1c0ea519f8fc057a80fcd04a7420f8e8bcd0a7567c272e007b 

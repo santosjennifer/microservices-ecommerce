@@ -1,0 +1,32 @@
+server:
+   port: 8003
+eureka:
+   instance:
+      instance-id: ${spring.application.name}
+      hostname: localhost
+      statusPageUrlPath: /actuator/health
+   client:
+      service-url:
+         defaultZone: http://localhost:8761/eureka
+spring:
+   application:
+      name: ms-order
+   datasource:
+      url: jdbc:postgresql://localhost:5432/ecommerce
+      username: postgres
+      password: postgres
+      driver-class-name: org.postgresql.Driver
+   jpa: 
+      hibernate:
+         ddl-auto: update
+   kafka:
+      producer:
+         bootstrap-servers: localhost:29092
+         key-serializer: org.apache.kafka.common.serialization.StringSerializer
+         value-serializer: com.github.ecommerce.serializer.OrderSerializer
+         group-id: group_id
+
+topic: 
+   name: 
+      producer: order-mail
+         
