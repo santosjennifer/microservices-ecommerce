@@ -27,7 +27,7 @@ jobs:
 
       - name: Push to Docker Hub
         run: |
-          docker tag ${{ secrets.DOCKER_USERNAME }}/ecommerce/naming-server:1.0.0-SNAPSHOT ${{ secrets.DOCKER_USERNAME }}/ecommerce/naming-server:${{github.run_id}}
-          docker tag ${{ secrets.DOCKER_USERNAME }}/ecommerce/naming-server:1.0.0-SNAPSHOT ${{ secrets.DOCKER_USERNAME }}/ecommerce/naming-server:latest
+          docker tag ${{ secrets.DOCKER_USERNAME }}/naming-server:1.0.0-SNAPSHOT ${{ secrets.DOCKER_USERNAME }}/naming-server:${{github.run_id}}
+          docker tag ${{ secrets.DOCKER_USERNAME }}/naming-server:1.0.0-SNAPSHOT ${{ secrets.DOCKER_USERNAME }}/naming-server:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/ecommerce/naming-server:${{github.run_id}}
           docker push ${{ secrets.DOCKER_USERNAME }}/ecommerce/naming-server:latest
