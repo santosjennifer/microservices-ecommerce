@@ -25,9 +25,57 @@ jobs:
         working-directory: ./ecommerce/naming-server
         run: mvn spring-boot:build-image -DskipTests
 
+      - name: Build Gateway Server
+        working-directory: ./ecommerce/gateway-server
+        run: mvn spring-boot:build-image -DskipTests
+
+      - name: Build ms-authentication
+        working-directory: ./ecommerce/ms-authentication
+        run: mvn spring-boot:build-image -DskipTests
+
+      - name: Build ms-customer
+        working-directory: ./ecommerce/ms-customer
+        run: mvn spring-boot:build-image
+
+      - name: Build ms-product
+        working-directory: ./ecommerce/ms-product
+        run: mvn spring-boot:build-image -DskipTests
+
+      - name: Build ms-order
+        working-directory: ./ecommerce/ms-order
+        run: mvn spring-boot:build-image -DskipTests
+
+      - name: Build ms-mail
+        working-directory: ./ecommerce/ms-mail
+        run: mvn spring-boot:build-image -DskipTests
+
       - name: Push to Docker Hub
         run: |
           docker tag ${{ secrets.DOCKER_USERNAME }}/ecommerce/naming-server:1.0.0-SNAPSHOT ${{ secrets.DOCKER_USERNAME }}/naming-server:${{github.run_id}}
           docker tag ${{ secrets.DOCKER_USERNAME }}/ecommerce/naming-server:1.0.0-SNAPSHOT ${{ secrets.DOCKER_USERNAME }}/naming-server:latest
+          docker tag ${{ secrets.DOCKER_USERNAME }}/ecommerce/gateway-server:1.0.0-SNAPSHOT ${{ secrets.DOCKER_USERNAME }}/gateway-server:${{github.run_id}}
+          docker tag ${{ secrets.DOCKER_USERNAME }}/ecommerce/gateway-server:1.0.0-SNAPSHOT ${{ secrets.DOCKER_USERNAME }}/gateway-server:latest
+          docker tag ${{ secrets.DOCKER_USERNAME }}/ecommerce/ms-authentication:1.0.0-SNAPSHOT ${{ secrets.DOCKER_USERNAME }}/ms-authentication:${{github.run_id}}
+          docker tag ${{ secrets.DOCKER_USERNAME }}/ecommerce/ms-authentication:1.0.0-SNAPSHOT ${{ secrets.DOCKER_USERNAME }}/ms-authentication:latest
+          docker tag ${{ secrets.DOCKER_USERNAME }}/ecommerce/ms-customer:1.0.0-SNAPSHOT ${{ secrets.DOCKER_USERNAME }}/ms-customer:${{github.run_id}}
+          docker tag ${{ secrets.DOCKER_USERNAME }}/ecommerce/ms-customer:1.0.0-SNAPSHOT ${{ secrets.DOCKER_USERNAME }}/ms-customer:latest
+          docker tag ${{ secrets.DOCKER_USERNAME }}/ecommerce/ms-product:1.0.0-SNAPSHOT ${{ secrets.DOCKER_USERNAME }}/ms-product:${{github.run_id}}
+          docker tag ${{ secrets.DOCKER_USERNAME }}/ecommerce/ms-product:1.0.0-SNAPSHOT ${{ secrets.DOCKER_USERNAME }}/ms-product:latest
+          docker tag ${{ secrets.DOCKER_USERNAME }}/ecommerce/ms-order:1.0.0-SNAPSHOT ${{ secrets.DOCKER_USERNAME }}/ms-order:${{github.run_id}}
+          docker tag ${{ secrets.DOCKER_USERNAME }}/ecommerce/ms-order:1.0.0-SNAPSHOT ${{ secrets.DOCKER_USERNAME }}/ms-order:latest
+          docker tag ${{ secrets.DOCKER_USERNAME }}/ecommerce/ms-mail:1.0.0-SNAPSHOT ${{ secrets.DOCKER_USERNAME }}/ms-mail:${{github.run_id}}
+          docker tag ${{ secrets.DOCKER_USERNAME }}/ecommerce/ms-mail:1.0.0-SNAPSHOT ${{ secrets.DOCKER_USERNAME }}/ms-mail:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/naming-server:${{github.run_id}}
           docker push ${{ secrets.DOCKER_USERNAME }}/naming-server:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/gateway-server:${{github.run_id}}
+          docker push ${{ secrets.DOCKER_USERNAME }}/gateway-server:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/ms-authentication:${{github.run_id}}
+          docker push ${{ secrets.DOCKER_USERNAME }}/ms-authentication:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/ms-customer:${{github.run_id}}
+          docker push ${{ secrets.DOCKER_USERNAME }}/ms-customer:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/ms-product:${{github.run_id}}
+          docker push ${{ secrets.DOCKER_USERNAME }}/ms-product:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/ms-order:${{github.run_id}}
+          docker push ${{ secrets.DOCKER_USERNAME }}/ms-order:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/ms-mail:${{github.run_id}}
+          docker push ${{ secrets.DOCKER_USERNAME }}/ms-mail:latest
