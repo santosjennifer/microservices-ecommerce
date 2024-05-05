@@ -1,0 +1,33 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Docker Login
+        uses: docker/login-action@v3.1.0
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Setup Java JDK
+        uses: actions/setup-java@v4.2.1
+        with:
+          java-version: '21'
+          distribution: 'adopt'
+
+      - name: Build Naming Server
+        working-directory: ./ecommerce/naming-server
+        run: mvn spring-boot:build-image -DskipTests
+
+      - name: Push to Docker Hub
+        run: |
+          docker tag ${{ secrets.DOCKER_USERNAME }}/ecommerce/naming-server:1.0.0-SNAPSHOT ${{ secrets.DOCKER_USERNAME }}/ecommerce/naming-server:${{github.run_id}}
+          docker tag ${{ secrets.DOCKER_USERNAME }}/ecommerce/naming-server:1.0.0-SNAPSHOT ${{ secrets.DOCKER_USERNAME }}/ecommerce/naming-server:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/ecommerce/naming-server:${{github.run_id}}
+          docker push ${{ secrets.DOCKER_USERNAME }}/ecommerce/naming-server:latest
