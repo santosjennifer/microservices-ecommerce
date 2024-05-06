@@ -1,4 +1,5 @@
 ![Last Commit](https://img.shields.io/github/last-commit/santosjennifer/microservices-ecommerce)
+[![Continuous Integration with Github](https://github.com/santosjennifer/microservices-ecommerce/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/santosjennifer/microservices-ecommerce/actions/workflows/docker-publish.yml)
 
 ### Repositório com os serviços naming-server, gateway-server, ms-authentication, ms-order, ms-product, ms-customer e ms-mail.
 
