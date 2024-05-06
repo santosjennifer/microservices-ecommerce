@@ -1,0 +1,168 @@
+version: "3.7"
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - 22181:2181
+    networks:
+      - jads-network
+  
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    ports:
+      - 29092:9092
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - jads-network
+      
+  db-ecommerce:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: ecommerce
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: admin123
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    ports:
+      - 5433:5432
+    expose:
+      - 5433
+    networks:
+      - jads-network
+      
+  naming-server:
+    image: santosjennifer/naming-server
+    ports:
+      - 8761:8761
+    networks:
+      - jads-network
+      
+  gateway-server:
+    image: santosjennifer/gateway-server
+    ports:
+      - 7099:7099
+    depends_on:
+      - naming-server
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
+      EUREKA.INSTANCE.PREFERIPADDRESS: "true"
+      EUREKA.INSTANCE.STATUSPAGEURLPATH: http://localhost:7099/actuator/health
+    networks:
+      - jads-network
+
+  ms-authentication:
+    image: santosjennifer/ms-authentication
+    restart: always
+    ports:
+      - 8004:8004
+    depends_on:
+      - naming-server
+      - db-ecommerce
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
+      EUREKA.INSTANCE.PREFERIPADDRESS: "true"
+      EUREKA.INSTANCE.STATUSPAGEURLPATH: http://localhost:8004/actuator/health
+      SPRING.DATASOURCE.URL: jdbc:postgresql://db-ecommerce:5432/ecommerce
+      SPRING.DATASOURCE.USERNAME: root
+      SPRING.DATASOURCE.PASSWORD: admin123
+      SPRING.DATASOURCE.DRIVER-CLASS-NAME: org.postgresql.Driver
+    networks:
+      - jads-network
+      
+  ms-customer:
+    image: santosjennifer/ms-customer
+    restart: always
+    ports:
+      - 8002:8002
+    depends_on:
+      - naming-server
+      - db-ecommerce
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
+      EUREKA.INSTANCE.PREFERIPADDRESS: "true"
+      EUREKA.INSTANCE.STATUSPAGEURLPATH: http://localhost:8002/actuator/health
+      SPRING.DATASOURCE.URL: jdbc:postgresql://db-ecommerce:5432/ecommerce
+      SPRING.DATASOURCE.USERNAME: root
+      SPRING.DATASOURCE.PASSWORD: admin123
+      SPRING.JPA.DATABASE-PLATFORM: org.hibernate.dialect.PostgreSQLDialect
+    networks:
+      - jads-network
+
+  ms-product:
+    image: santosjennifer/ms-product
+    restart: always
+    ports:
+      - 8001:8001
+    depends_on:
+      - naming-server
+      - db-ecommerce
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
+      EUREKA.INSTANCE.PREFERIPADDRESS: "true"
+      EUREKA.INSTANCE.STATUSPAGEURLPATH: http://localhost:8001/actuator/health
+      SPRING.DATASOURCE.URL: jdbc:postgresql://db-ecommerce:5432/ecommerce
+      SPRING.DATASOURCE.USERNAME: root
+      SPRING.DATASOURCE.PASSWORD: admin123
+      SPRING.JPA.DATABASE-PLATFORM: org.hibernate.dialect.PostgreSQLDialect
+    networks:
+      - jads-network
+      
+  ms-order:
+    image: santosjennifer/ms-order
+    restart: always
+    ports:
+      - 8003:8003
+    depends_on:
+      - naming-server
+      - db-ecommerce
+      - kafka
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
+      EUREKA.INSTANCE.PREFERIPADDRESS: "true"
+      EUREKA.INSTANCE.STATUSPAGEURLPATH: http://localhost:8003/actuator/health
+      SPRING.DATASOURCE.URL: jdbc:postgresql://db-ecommerce:5432/ecommerce
+      SPRING.DATASOURCE.USERNAME: root
+      SPRING.DATASOURCE.PASSWORD: admin123
+      SPRING.JPA.DATABASE-PLATFORM: org.hibernate.dialect.PostgreSQLDialect
+      SPRING.KAFKA.PRODUCER.BOOTSTRAP-SERVERS: kafka:9092
+    networks:
+      - jads-network
+      
+  ms-mail:
+    image: santosjennifer/ms-mail
+    restart: always
+    ports:
+      - 8005:8005
+    depends_on:
+      - naming-server
+      - db-ecommerce
+      - kafka
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
+      EUREKA.INSTANCE.PREFERIPADDRESS: "true"
+      EUREKA.INSTANCE.STATUSPAGEURLPATH: http://localhost:8005/actuator/health
+      SPRING.DATASOURCE.URL: jdbc:postgresql://db-ecommerce:5432/ecommerce
+      SPRING.DATASOURCE.USERNAME: root
+      SPRING.DATASOURCE.PASSWORD: admin123
+      SPRING.JPA.DATABASE-PLATFORM: org.hibernate.dialect.PostgreSQLDialect
+      SPRING.KAFKA.CONSUMER.BOOTSTRAP-SERVERS: kafka:9092
+      MAIL.SMTP.USERNAME: SEU_EMAIL@gmail.com
+      MAIL.SMTP.PASSWORD: SENHA_EMAIL
+    networks:
+      - jads-network
+
+networks:
+   jads-network:
+      driver: bridge
