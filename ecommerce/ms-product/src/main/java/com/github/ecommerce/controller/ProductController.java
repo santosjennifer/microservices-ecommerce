@@ -71,7 +71,7 @@ public class ProductController {
 	    Optional<List<ProductDto>> list = service.listAll();
 
 	    if (list.isEmpty()) {
-	        return ResponseEntity.noContent().build();
+	    	return ResponseEntity.ok(Collections.emptyList());
 	    }
 
 	    List<ProductDto> dtos = list.get();

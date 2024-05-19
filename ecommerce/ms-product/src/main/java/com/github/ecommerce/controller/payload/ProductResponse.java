@@ -30,50 +30,26 @@ public class ProductResponse {
 	public Long getId() {
 		return id;
 	}
-	public void setId(Long id) {
-		this.id = id;
-	}
 	public String getName() {
 		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
 	}
 	public Integer getAmount() {
 		return amount;
 	}
-	public void setAmount(Integer amount) {
-		this.amount = amount;
-	}
 	public Double getCostValue() {
 		return costValue;
-	}
-	public void setCostValue(Double costValue) {
-		this.costValue = costValue;
 	}
 	public Double getSalesValue() {
 		return salesValue;
 	}
-	public void setSalesValue(Double salesValue) {
-		this.salesValue = salesValue;
-	}
 	public Date getRegistrationDate() {
 		return registrationDate;
-	}
-	public void setRegistrationDate(Date registrationDate) {
-		this.registrationDate = registrationDate;
 	}
 	public String getNote() {
 		return note;
 	}
-	public void setNote(String note) {
-		this.note = note;
-	}
 	public List<Category> getCategories() {
 		return categories;
-	}
-	public void setCategories(List<Category> categories) {
-		this.categories = categories;
 	}
     
 }

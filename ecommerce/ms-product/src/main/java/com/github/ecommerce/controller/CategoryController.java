@@ -1,5 +1,6 @@
 package com.github.ecommerce.controller;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -65,11 +66,7 @@ public class CategoryController {
 	public ResponseEntity<List<CategoryResponse>> findAll() {
 	    Optional<List<CategoryDto>> list = service.listAll();
 
-	    if (list.isEmpty()) {
-	        return ResponseEntity.noContent().build();
-	    }
-
-	    List<CategoryDto> dtos = list.get();
+	    List<CategoryDto> dtos = list.orElse(Collections.emptyList());
 	    List<CategoryResponse> response = dtos.stream()
 	            .map(CategoryDto::toResponse)
 	            .collect(Collectors.toList());

@@ -51,7 +51,7 @@ public class ProductServiceImpl implements ProductService {
 		List<Product> list = productRepository.findAll();
 		
 		if (list.isEmpty()) {
-			Optional.empty();
+			return Optional.empty();
 		}
 		
 		List<ProductDto> dtoList = list.stream()

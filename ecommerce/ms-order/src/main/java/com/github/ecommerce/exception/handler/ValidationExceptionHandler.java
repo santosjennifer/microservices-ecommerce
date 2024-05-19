@@ -48,6 +48,12 @@ public class ValidationExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
     
+    @ExceptionHandler({ FeignException.NotFound.class })
+    public ResponseEntity<BodyResponse> handleFeignExceptionNotFound(FeignException.NotFound ex) {
+        BodyResponse response = new BodyResponse("Registro não encontrado. Verifique os dados e tente novamente. " + ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+    
 	@ExceptionHandler({ FeignException.ServiceUnavailable.class })
 	public ResponseEntity<BodyResponse> handleFeignServiceUnavailable(FeignException.ServiceUnavailable ex) {
     	String serviceName = extractServiceName(ex.request().url());

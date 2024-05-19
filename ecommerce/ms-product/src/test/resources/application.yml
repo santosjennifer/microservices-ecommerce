@@ -1,0 +1,10 @@
+spring:
+   config:
+      activate:
+         on-profile: test
+   datasource:
+      url: jdbc:h2:mem:product
+      username: test
+      password: test
+      driverClassName: org.h2.Driver
+
