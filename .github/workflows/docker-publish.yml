@@ -39,7 +39,7 @@ jobs:
 
       - name: Build ms-product
         working-directory: ./ecommerce/ms-product
-        run: mvn spring-boot:build-image -DskipTests
+        run: mvn spring-boot:build-image
 
       - name: Build ms-order
         working-directory: ./ecommerce/ms-order
