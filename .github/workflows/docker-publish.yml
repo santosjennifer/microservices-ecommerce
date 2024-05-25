@@ -43,7 +43,7 @@ jobs:
 
       - name: Build ms-order
         working-directory: ./ecommerce/ms-order
-        run: mvn spring-boot:build-image -DskipTests
+        run: mvn spring-boot:build-image
 
       - name: Build ms-mail
         working-directory: ./ecommerce/ms-mail

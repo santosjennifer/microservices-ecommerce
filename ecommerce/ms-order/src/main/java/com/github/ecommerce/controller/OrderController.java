@@ -1,5 +1,6 @@
 package com.github.ecommerce.controller;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -40,7 +41,7 @@ public class OrderController {
 		Optional<List<OrderDto>> order = service.list();
 		
 		if (order.isEmpty()) {
-			return ResponseEntity.noContent().build();
+			return ResponseEntity.ok(Collections.emptyList());
 		}
 		
 		List<OrderResponse> response = order.get().stream()
