@@ -32,9 +32,6 @@ import com.github.ecommerce.model.Address;
 import com.github.ecommerce.model.Customer;
 import com.github.ecommerce.repository.CustomerRepository;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.Query;
-
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
 public class CustomerServiceImplTest {
@@ -44,12 +41,6 @@ public class CustomerServiceImplTest {
 
     @Mock
     CustomerRepository repository;
-    
-    @Mock
-    EntityManager entityManager;
-
-    @Mock
-    Query query;
     
 	Long id = 1l;
 	String name = "João de Oliveira";
@@ -95,12 +86,14 @@ public class CustomerServiceImplTest {
 		Customer customer = new Customer(id, name, phone, cpf, email, null);
 
 		when(repository.findById(id)).thenReturn(Optional.of(customer));
+		
+		Optional<CustomerDto> customerDto = service.findById(id);
 
-		assertEquals(id, customer.getId());
-		assertEquals(name, customer.getName());
-		assertEquals(phone, customer.getPhone());
-		assertEquals(cpf, customer.getCpf());
-		assertEquals(email, customer.getEmail());
+		assertEquals(id, customerDto.get().getId());
+		assertEquals(name, customerDto.get().getName());
+		assertEquals(phone, customerDto.get().getPhone());
+		assertEquals(cpf, customerDto.get().getCpf());
+		assertEquals(email, customerDto.get().getEmail());
 	}
 	
 	@Test
@@ -108,7 +101,11 @@ public class CustomerServiceImplTest {
 	public void findNonExistentCustomerByIdTest() {
 		when(repository.findById(anyLong())).thenThrow(new CustomerNotFoundException());
 
-		assertThrows(CustomerNotFoundException.class, () -> service.findById(123L));
+        CustomerNotFoundException exception = assertThrows(CustomerNotFoundException.class, () -> {
+        	service.findById(123L);
+        });
+
+        assertEquals("Cliente não encontrado.", exception.getMessage());
 	}
 	
 	@Test
@@ -171,18 +168,16 @@ public class CustomerServiceImplTest {
         
         when(repository.findById(invalidCustomer)).thenReturn(Optional.empty());
 
-        assertThrows(CustomerNotFoundException.class, () -> service.update(invalidCustomer, customerUpdate));
+        CustomerNotFoundException exception = assertThrows(CustomerNotFoundException.class, () -> {
+        	service.update(invalidCustomer, customerUpdate);
+        });
+
+        assertEquals("Cliente não encontrado.", exception.getMessage());
     }
 	
     @Test
     @DisplayName("Deve excluir um cliente")
     public void deleteCustomerWithNoOrdersTest() {
-        String sql = "SELECT COUNT(*) FROM orders WHERE customer_id = :customerId";
-
-        when(entityManager.createNativeQuery(sql)).thenReturn(query);
-        when(query.setParameter("customerId", id)).thenReturn(query);
-        when(query.getSingleResult()).thenReturn(0L);
-
         service.delete(id);
 
         verify(repository).deleteById(id);
@@ -191,14 +186,13 @@ public class CustomerServiceImplTest {
     @Test
     @DisplayName("Deve lançar uma exceção ao tentar excluir um cliente com pedidos")
     public void deleteCustomerWithOrdersTest() {
-        String sql = "SELECT COUNT(*) FROM orders WHERE customer_id = :customerId";
+    	when(repository.findOrdersByCustomerId(id)).thenReturn(1L);
 
-        when(entityManager.createNativeQuery(sql)).thenReturn(query);
-        when(query.setParameter("customerId", id)).thenReturn(query);
-        when(query.getSingleResult()).thenReturn(1L);
+        CannotDeleteCustomerException exception = assertThrows(CannotDeleteCustomerException.class, () -> {
+        	service.delete(id);
+        });
 
-        assertThrows(CannotDeleteCustomerException.class, () -> service.delete(id));
+        assertEquals("O cliente possui pedidos associados e não pode ser excluído.", exception.getMessage());
     }
-	
 
 }

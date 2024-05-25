@@ -2,9 +2,11 @@ package com.github.ecommerce.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -35,6 +37,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.ecommerce.controller.payload.CustomerRequest;
 import com.github.ecommerce.dto.CustomerDto;
+import com.github.ecommerce.exception.CannotDeleteCustomerException;
+import com.github.ecommerce.exception.CustomerNotFoundException;
 import com.github.ecommerce.service.CustomerService;
 
 @ExtendWith(SpringExtension.class)
@@ -107,7 +111,7 @@ public class CustomerControllerTest {
     @Test
     @DisplayName("Deve retornar status no content quando o cliente procurado não existir")
     public void customerNotFoundTest() throws Exception {
-    	BDDMockito.given(service.findById(Mockito.anyLong())).willReturn( Optional.empty() );
+    	BDDMockito.given(service.findById(Mockito.anyLong())).willReturn(Optional.empty());
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .get(CUSTOMER_API.concat("/" + 1))
@@ -141,7 +145,7 @@ public class CustomerControllerTest {
     }
     
     @Test
-    @DisplayName("Deve retornar status no content quando não existir nenhum cliente")
+    @DisplayName("Deve retornar uma lista vazia quando não existir nenhum cliente")
     public void noCustomersTest() throws Exception {
     	when(service.findAll(Mockito.any(Pageable.class))).thenReturn(new PageImpl<>(Collections.emptyList()));
     	
@@ -151,11 +155,13 @@ public class CustomerControllerTest {
 
         mockMvc
             .perform(request)
-            .andExpect(status().isNoContent());
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$").isEmpty())
+            .andReturn();
     }
 
     @Test
-    @DisplayName("Deve deletar um cliente")
+    @DisplayName("Deve excluir um cliente")
     public void deleteCustomerTest() throws Exception {
 
         BDDMockito.given(service.findById(anyLong())).willReturn(Optional.of(new CustomerDto(id, name, phone, cpf, email, null)));
@@ -166,6 +172,17 @@ public class CustomerControllerTest {
         mockMvc.perform(request)
             .andExpect(status().isNoContent());
     }
+    
+	@Test
+	@DisplayName("Deve lançar exceção ao tentar excluir um cliente com pedidos atrelados")
+	public void deleteCustomerWithOrdersTest() throws Exception {
+		doThrow(new CannotDeleteCustomerException()).when(service).delete(anyLong());
+
+		mockMvc.perform(delete(CUSTOMER_API.concat("/" + id)))
+				.andExpect(status().isUnprocessableEntity())
+				.andExpect(jsonPath("message").value("O cliente possui pedidos associados e não pode ser excluído."))
+				.andReturn();
+	}
     
     @Test
     @DisplayName("Deve atualizar os dados do cliente")
@@ -194,5 +211,25 @@ public class CustomerControllerTest {
                 .andExpect(jsonPath("email").value(updateEmail))
                 .andExpect(jsonPath("phone").value(phone));
     }
+    
+	@Test
+	@DisplayName("Deve lançar exceção ao tentar atualizar um cliente que não existe")
+	public void updateWithInvalidCustomerTest() throws Exception {
+		CustomerRequest request = new CustomerRequest();
+		request.setName("Novo nome");
+		request.setCpf(cpf);
+		request.setPhone(phone);
+		request.setAddress(null);
+
+		String json = new ObjectMapper().writeValueAsString(request);
+		
+		when(service.update(anyLong(), any(CustomerDto.class))).thenThrow(new CustomerNotFoundException());
+
+		mockMvc.perform(put(CUSTOMER_API.concat("/" + id))
+				.contentType(MediaType.APPLICATION_JSON).content(json))
+				.andExpect(status().isNotFound())
+				.andExpect(jsonPath("message").value("Cliente não encontrado."))
+				.andReturn();
+	}
     
 }

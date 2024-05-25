@@ -1,5 +1,6 @@
 package com.github.ecommerce.controller;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -51,7 +52,7 @@ public class CustomerController {
 	    Page<CustomerDto> customers = service.findAll(pageable);
 	    
 	    if(customers.isEmpty()) {
-	        return ResponseEntity.noContent().build();
+	        return ResponseEntity.ok(Collections.emptyList());
 	    }
 	    
 	    List<CustomerResponse> response = customers.getContent().stream()

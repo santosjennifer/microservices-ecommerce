@@ -15,19 +15,15 @@ import com.github.ecommerce.model.Customer;
 import com.github.ecommerce.repository.CustomerRepository;
 import com.github.ecommerce.service.CustomerService;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
 	
 	private CustomerRepository customerRepository;
-	private EntityManager entityManager;
 	
-	public CustomerServiceImpl(CustomerRepository customerRepository, EntityManager entityManager) {
+	public CustomerServiceImpl(CustomerRepository customerRepository) {
 		this.customerRepository = customerRepository;
-		this.entityManager = entityManager;
 	}
 
 	@Override
@@ -95,15 +91,10 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 	
     @Override
-    public void delete(Long id) {
-        String sql = "SELECT COUNT(*) FROM orders WHERE customer_id = :customerId";
+    public void delete(Long id) {	
+    	Long customerOrders = customerRepository.findOrdersByCustomerId(id);
 
-        Query query = entityManager.createNativeQuery(sql);
-        query.setParameter("customerId", id);
-
-        Long count = (Long) query.getSingleResult();
-
-        if (count > 0) {
+        if (customerOrders > 0) {
             throw new CannotDeleteCustomerException();
         }
 

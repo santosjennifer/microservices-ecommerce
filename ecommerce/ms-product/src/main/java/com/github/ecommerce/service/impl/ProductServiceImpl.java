@@ -18,8 +18,6 @@ import com.github.ecommerce.repository.CategoryRepository;
 import com.github.ecommerce.repository.ProductRepository;
 import com.github.ecommerce.service.ProductService;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -27,12 +25,10 @@ public class ProductServiceImpl implements ProductService {
 	
 	private ProductRepository productRepository;
 	private CategoryRepository categoryRepository;
-	private EntityManager entityManager;
 	
-	public ProductServiceImpl(ProductRepository repository, CategoryRepository categoryRepository, EntityManager entityManager) {
+	public ProductServiceImpl(ProductRepository repository, CategoryRepository categoryRepository) {
 		this.productRepository = repository;
 		this.categoryRepository = categoryRepository;
-		this.entityManager = entityManager;
 	}
 
 	@Override
@@ -128,14 +124,9 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public void delete(Long id) {
-        String sql = "SELECT COUNT(*) FROM orders WHERE :productId = ANY(product_ids)";
+        Long productOrders = productRepository.findOrdersByProductId(id);
 
-        Query query = entityManager.createNativeQuery(sql);
-        query.setParameter("productId", id);
-
-        Long count = (Long) query.getSingleResult();
-
-        if (count > 0) {
+        if (productOrders > 0) {
             throw new CannotDeleteProductException();
         }
 		

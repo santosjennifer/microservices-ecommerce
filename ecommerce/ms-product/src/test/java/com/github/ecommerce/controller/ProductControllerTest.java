@@ -150,11 +150,17 @@ public class ProductControllerTest {
 				.get(PRODUCT_API.concat("/" + id))
 				.accept(MediaType.APPLICATION_JSON);
 
-		mockMvc.perform(request).andExpect(status().isOk()).andExpect(jsonPath("id").value(id))
-				.andExpect(jsonPath("name").value(name)).andExpect(jsonPath("amount").value(amount))
-				.andExpect(jsonPath("costValue").value(costValue)).andExpect(jsonPath("salesValue").value(salesValue))
-				.andExpect(jsonPath("registrationDate").exists()).andExpect(jsonPath("note").value(note))
-				.andExpect(jsonPath("categories").value(categories)).andReturn();
+		mockMvc.perform(request)
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("id").value(id))
+				.andExpect(jsonPath("name").value(name))
+				.andExpect(jsonPath("amount").value(amount))
+				.andExpect(jsonPath("costValue").value(costValue))
+				.andExpect(jsonPath("salesValue").value(salesValue))
+				.andExpect(jsonPath("registrationDate").exists())
+				.andExpect(jsonPath("note").value(note))
+				.andExpect(jsonPath("categories").value(categories))
+				.andReturn();
 	}
 
 	@Test
@@ -166,7 +172,9 @@ public class ProductControllerTest {
 				.get(PRODUCT_API.concat("/" + 1))
 				.accept(MediaType.APPLICATION_JSON);
 
-		mockMvc.perform(request).andExpect(status().isNoContent()).andReturn();
+		mockMvc.perform(request)
+				.andExpect(status().isNoContent())
+				.andReturn();
 	}
 
 	@Test
@@ -182,17 +190,25 @@ public class ProductControllerTest {
 				.get(PRODUCT_API)
 				.accept(MediaType.APPLICATION_JSON);
 
-		mockMvc.perform(request).andExpect(status().isOk()).andExpect(jsonPath("$.[0].id").value(3l))
-				.andExpect(jsonPath("$.[0].name").value(name)).andExpect(jsonPath("$.[0].amount").value(amount))
+		mockMvc.perform(request)
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.[0].id").value(3l))
+				.andExpect(jsonPath("$.[0].name").value(name))
+				.andExpect(jsonPath("$.[0].amount").value(amount))
 				.andExpect(jsonPath("$.[0].costValue").value(costValue))
 				.andExpect(jsonPath("$.[0].salesValue").value(salesValue))
-				.andExpect(jsonPath("$.[0].registrationDate").exists()).andExpect(jsonPath("$.[0].note").value(note))
-				.andExpect(jsonPath("$.[0].categories").value(categories)).andExpect(jsonPath("$.[1].id").value(7l))
-				.andExpect(jsonPath("$.[1].name").value(name)).andExpect(jsonPath("$.[1].amount").value(amount))
+				.andExpect(jsonPath("$.[0].registrationDate").exists())
+				.andExpect(jsonPath("$.[0].note").value(note))
+				.andExpect(jsonPath("$.[0].categories").value(categories))
+				.andExpect(jsonPath("$.[1].id").value(7l))
+				.andExpect(jsonPath("$.[1].name").value(name))
+				.andExpect(jsonPath("$.[1].amount").value(amount))
 				.andExpect(jsonPath("$.[1].costValue").value(costValue))
 				.andExpect(jsonPath("$.[1].salesValue").value(salesValue))
-				.andExpect(jsonPath("$.[1].registrationDate").exists()).andExpect(jsonPath("$.[1].note").value(note))
-				.andExpect(jsonPath("$.[1].categories").value(categories)).andReturn();
+				.andExpect(jsonPath("$.[1].registrationDate").exists())
+				.andExpect(jsonPath("$.[1].note").value(note))
+				.andExpect(jsonPath("$.[1].categories").value(categories))
+				.andReturn();
 	}
 
 	@Test
@@ -204,8 +220,11 @@ public class ProductControllerTest {
 				.get(PRODUCT_API)
 				.accept(MediaType.APPLICATION_JSON);
 
-		mockMvc.perform(request).andExpect(status().isOk()).andExpect(jsonPath("$").isArray())
-				.andExpect(jsonPath("$").isEmpty()).andReturn();
+		mockMvc.perform(request)
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$").isArray())
+				.andExpect(jsonPath("$").isEmpty())
+				.andReturn();
 	}
 
 	@Test
@@ -218,7 +237,9 @@ public class ProductControllerTest {
 		MockHttpServletRequestBuilder request = MockMvcRequestBuilders
 				.delete(PRODUCT_API.concat("/" + id));
 
-		mockMvc.perform(request).andExpect(status().isNoContent());
+		mockMvc.perform(request)
+				.andExpect(status()
+				.isNoContent());
 	}
 
 	@Test
@@ -251,8 +272,11 @@ public class ProductControllerTest {
 				.param("productIds", "3", "6")
 				.accept(MediaType.APPLICATION_JSON);
 
-		mockMvc.perform(request).andExpect(status().isOk()).andExpect(jsonPath("$[0].id").value(idX))
-				.andExpect(jsonPath("$[1].id").value(idY)).andReturn();
+		mockMvc.perform(request)
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$[0].id").value(idX))
+				.andExpect(jsonPath("$[1].id").value(idY))
+				.andReturn();
 	}
 
 	@Test
@@ -267,8 +291,11 @@ public class ProductControllerTest {
 				.param("productIds", "1")
 				.accept(MediaType.APPLICATION_JSON);
 
-		mockMvc.perform(request).andExpect(status().isOk()).andExpect(jsonPath("$").isArray())
-				.andExpect(jsonPath("$").isEmpty()).andReturn();
+		mockMvc.perform(request)
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$").isArray())
+				.andExpect(jsonPath("$").isEmpty())
+				.andReturn();
 	}
 
 }

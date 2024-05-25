@@ -34,9 +34,6 @@ import com.github.ecommerce.model.Product;
 import com.github.ecommerce.repository.CategoryRepository;
 import com.github.ecommerce.repository.ProductRepository;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.Query;
-
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
 public class ProductServiceImplTest {
@@ -49,12 +46,6 @@ public class ProductServiceImplTest {
     
     @Mock
     CategoryRepository categoryRepository;
-    
-    @Mock
-    EntityManager entityManager;
-
-    @Mock
-    Query query;
     
     Long id = 1l;
     String name = "Panela";
@@ -237,12 +228,6 @@ public class ProductServiceImplTest {
     @Test
     @DisplayName("Deve excluir um produto")
     public void deleteProductWithNoOrdersTest() {
-        String sql = "SELECT COUNT(*) FROM orders WHERE :productId = ANY(product_ids)";
-
-        when(entityManager.createNativeQuery(sql)).thenReturn(query);
-        when(query.setParameter("productId", id)).thenReturn(query);
-        when(query.getSingleResult()).thenReturn(0L);
-
         service.delete(id);
 
         verify(productRepository).deleteById(id);
@@ -251,11 +236,7 @@ public class ProductServiceImplTest {
     @Test
     @DisplayName("Deve lançar uma exceção ao tentar excluir um produto com pedidos")
     public void deleteProductWithOrdersTest() {
-        String sql = "SELECT COUNT(*) FROM orders WHERE :productId = ANY(product_ids)";
-
-        when(entityManager.createNativeQuery(sql)).thenReturn(query);
-        when(query.setParameter("productId", id)).thenReturn(query);
-        when(query.getSingleResult()).thenReturn(1L);
+    	when(productRepository.findOrdersByProductId(id)).thenReturn(1L);
         
         CannotDeleteProductException exception = assertThrows(CannotDeleteProductException.class, () -> {
         	service.delete(id);
