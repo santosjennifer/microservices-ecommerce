@@ -18,7 +18,7 @@
 - Spring Boot 3.2.5
 - Spring Security
 - Apache Kafka
-- Postgres
+- PostgreSQL
 
 ### Eureka Server
 ![image](https://github.com/santosjennifer/microservices-ecommerce/assets/90192611/3c9a0d05-2b9b-42f7-a9ee-8d6bf8799d53)
