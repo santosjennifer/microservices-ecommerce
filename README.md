@@ -11,7 +11,7 @@
 - **ms-product:** responsável por cadastrar e retornar os produtos e categorias.
 - **ms-mail:** responsável consumir os eventos no tópico do Kafka e enviar os e-mails para os clientes com os dados do pedido.
 
-### Principais ferramentas
+### Tecnologia
 
 - Java 21
 - Maven
@@ -20,17 +20,44 @@
 - Apache Kafka
 - PostgreSQL
 
-### Eureka Server
+### Como executar o projeto:
+
+1 - Clone o repositório:
+```
+git clone git@github.com:santosjennifer/microservices-ecommerce.git
+```
+2 - Na raiz do projeto, execute o comando:
+```
+docker-compose up
+```
+### Links Úteis
+
+- Eureka Server:
+```
+http://localhost:8761
+```
 ![image](https://github.com/santosjennifer/microservices-ecommerce/assets/90192611/3c9a0d05-2b9b-42f7-a9ee-8d6bf8799d53)
 
-### Swagger Authentication API
+- Swagger Authentication API:
+```
+http://localhost:8004/swagger-ui/index.html#/
+```
 ![image](https://github.com/santosjennifer/microservices-ecommerce/assets/90192611/ca86ee65-33d6-4652-92fd-449cce97941c)
 
-### Swagger Order API
+-  Swagger Order API:
+```
+http://localhost:8003/swagger-ui/index.html#/
+```
 ![image](https://github.com/santosjennifer/microservices-ecommerce/assets/90192611/5b411679-861d-4059-9a64-83915c4754cc)
 
-### Swagger Customer API
+- Swagger Customer API:
+```
+http://localhost:8002/swagger-ui/index.html#/
+```
 ![image](https://github.com/santosjennifer/microservices-ecommerce/assets/90192611/c0ff180b-803a-4b34-b6f6-dbd114aab2dc)
 
-### Swagger Product and Category API
+- Swagger Product and Category API:
+```
+http://localhost:8001/swagger-ui/index.html#/
+```
 ![image](https://github.com/santosjennifer/microservices-ecommerce/assets/90192611/4f0648bd-ab8a-4eb5-bbfd-2e40b90e5140)
