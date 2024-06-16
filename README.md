@@ -1,6 +1,9 @@
 ![Last Commit](https://img.shields.io/github/last-commit/santosjennifer/microservices-ecommerce)
 [![Continuous Integration with Github](https://github.com/santosjennifer/microservices-ecommerce/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/santosjennifer/microservices-ecommerce/actions/workflows/docker-publish.yml)
 
+## E-commerce
+Responsável por cadastrar produtos, categorias e clientes. Gerando pedidos e enviando e-mail de notificação para os clientes.
+
 ### Repositório com os serviços naming-server, gateway-server, ms-authentication, ms-order, ms-product, ms-customer e ms-mail.
 
 - **naming-server:** responsável por registrar e gerenciar a comunicação dos demais microserviços utilizando o spring eureka.
